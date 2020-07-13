@@ -4,7 +4,6 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QGridLayout, QWidget, QMessageBox
 from PyQt5.QtCore import QSize
 
-
 class MyWindow(QMainWindow):
     def __init__(self):
         super( MyWindow, self ).__init__()
@@ -28,11 +27,12 @@ class MyWindow(QMainWindow):
 
         # Criar os menus
         self.menuarquivo = self.barrademenu.addMenu("&Arquivo")
-        self.menutranformacao = self.barrademenu.addMenu("&Filtros")
-        self.menuSobre = self.barrademenu.addMenu("&Transformações")
+        self.menuFiltros = self.barrademenu.addMenu("&Filtros")
+        self.menuTransf = self.barrademenu.addMenu("&Transformações")
         self.menuSobre = self.barrademenu.addMenu("&Sobre")
 
-        # Criar as actions >> Menu Arquivo
+        # Criar as actions >>
+        ##MENU ARQUIVOS COMEÇA AQUI ------------------------------------------------------#
         self.opcaoabrir = self.menuarquivo.addAction("&Abrir Imagem")
         self.opcaoabrir.triggered.connect(self.open_file)
         self.opcaoabrir.setShortcut("Ctrl+O")
@@ -47,47 +47,82 @@ class MyWindow(QMainWindow):
         self.opcaofechar = self.menuarquivo.addAction("&Fechar Aplicação")
         self.opcaofechar.setShortcut("Ctrl+X")
         self.opcaofechar.triggered.connect(self.close)
+        ##MENU ARQUIVOS TERMINA AQUI ------------------------------------------------------#
 
-
-        # Menu Filtros
-        self.opcaoSharpen = self.menutranformacao.addAction("&Negativo")
-        self.opcaoSharpen.setShortcut("Ctrl+1")
+        ##MENU FILTROS COMEÇA AQUI ------------------------------------------------------#
+        self.opcaoNegativo = self.menuFiltros.addAction("&Negativo")
+        self.opcaoNegativo.setShortcut("Ctrl+1")
         #self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Correção Gamma" )
-        self.opcaoSharpen.setShortcut( "Ctrl+2" )
+        self.opcaoGamma = self.menuFiltros.addAction( "&Correção Gamma" )
+        self.opcaoGamma.setShortcut( "Ctrl+2" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Sharpen" )
+        self.opcaoSharpen = self.menuFiltros.addAction( "&Sharpen" )
         self.opcaoSharpen.setShortcut( "Ctrl+3" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Mediana" )
-        self.opcaoSharpen.setShortcut( "Ctrl+4" )
+        self.opcaoMediana = self.menuFiltros.addAction( "&Mediana" )
+        self.opcaoMediana.setShortcut( "Ctrl+4" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Gaussiano" )
-        self.opcaoSharpen.setShortcut( "Ctrl+5" )
+        self.opcaoGaussiano = self.menuFiltros.addAction( "&Gaussiano" )
+        self.opcaoGaussiano.setShortcut( "Ctrl+5" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.menutranformacao.addSeparator()
+        self.menuFiltros.addSeparator()
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "Escala cinza" )
-        self.opcaoSharpen.setShortcut( "Ctrl+6" )
+        self.opcaoCinza = self.menuFiltros.addAction( "Escala cinza" )
+        self.opcaoCinza.setShortcut( "Ctrl+6" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "Preto e branco" )
-        self.opcaoSharpen.setShortcut( "Ctrl+7" )
+        self.opcaoPeB = self.menuFiltros.addAction( "Preto e branco" )
+        self.opcaoPeB.setShortcut( "Ctrl+7" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "Separar camadas R.G.B" )
-        self.opcaoSharpen.setShortcut( "Ctrl+8" )
+        self.opcaoSeparar = self.menuFiltros.addAction( "Separar camadas R.G.B" )
+        self.opcaoSeparar.setShortcut( "Ctrl+8" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+        ##MENU FILTROS TERMINA AQUI ------------------------------------------------------#
+
+        ##MENU TRANSF COMEÇA AQUI ------------------------------------------------------#
+        self.opcaoNegativo = self.menuTransf.addAction( "&Logarítmica" )
+        self.opcaoNegativo.setShortcut( "Ctrl+F1" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        # Menu Sobre
+        self.opcaoSobel = self.menuTransf.addAction( "&Sobel" )
+        self.opcaoSobel.setShortcut( "Ctrl+F2" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoDeteccao = self.menuTransf.addAction( "&Detecção de Bordas" )
+        self.opcaoDeteccao.setShortcut( "Ctrl+F3" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoErosao = self.menuTransf.addAction( "&Erosão" )
+        self.opcaoErosao.setShortcut( "Ctrl+F4" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoDilatacao = self.menuTransf.addAction( "&Dilatação" )
+        self.opcaoDilatacao.setShortcut( "Ctrl+F5" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoAbertura = self.menuTransf.addAction( "&Abertura" )
+        self.opcaoAbertura.setShortcut( "Ctrl+F6" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoFechamento = self.menuTransf.addAction( "&Fechamento" )
+        self.opcaoFechamento.setShortcut( "Ctrl+F7" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoDetBin = self.menuTransf.addAction( "&Detecção Binária" )
+        self.opcaoDetBin.setShortcut( "Ctrl+F8" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        ##MENU TRANSF TERMINA AQUI ------------------------------------------------------#
+
+        ##MENU SOBRE COMEÇA AQUI ------------------------------------------------------#
         self.opcaosobre = self.menuSobre.addAction("Info Alunos")
         self.opcaosobre.triggered.connect(self.exibe_mensagem)
 
@@ -95,6 +130,7 @@ class MyWindow(QMainWindow):
 
         self.opcaosobre2 = self.menuSobre.addAction("Infos Imagem")
         self.opcaosobre2.triggered.connect(self.exibe_mensagem2)
+        ##MENU ARQUIVOS TERMINA AQUI ------------------------------------------------------#
 
         # Criar barra de status
         self.barradestatus = self.statusBar()
