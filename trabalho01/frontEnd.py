@@ -12,7 +12,7 @@ class MyWindow(QMainWindow):
         self.initUI()
 
     def setup_main_window(self):
-        self.setFixedSize(640, 480)
+        self.setFixedSize(800, 600)
         self.x = 640
         self.y = 480
         self.setMinimumSize(QSize(self.x, self.y))
@@ -29,6 +29,7 @@ class MyWindow(QMainWindow):
         # Criar os menus
         self.menuarquivo = self.barrademenu.addMenu("&Arquivo")
         self.menutranformacao = self.barrademenu.addMenu("&Filtros")
+        self.menuSobre = self.barrademenu.addMenu("&Transformações")
         self.menuSobre = self.barrademenu.addMenu("&Sobre")
 
         # Criar as actions >> Menu Arquivo
@@ -48,39 +49,42 @@ class MyWindow(QMainWindow):
         self.opcaofechar.triggered.connect(self.close)
 
 
-        # Menu Transformaçao
+        # Menu Filtros
         self.opcaoSharpen = self.menutranformacao.addAction("&Negativo")
         self.opcaoSharpen.setShortcut("Ctrl+1")
         #self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.menutranformacao.addSeparator()
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Transformação Logarítmica" )
+        self.opcaoSharpen = self.menutranformacao.addAction( "&Correção Gamma" )
         self.opcaoSharpen.setShortcut( "Ctrl+2" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.menutranformacao.addSeparator()
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Correção Gamma" )
+        self.opcaoSharpen = self.menutranformacao.addAction( "&Sharpen" )
         self.opcaoSharpen.setShortcut( "Ctrl+3" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.menutranformacao.addSeparator()
-
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Filtro Sharpen" )
+        self.opcaoSharpen = self.menutranformacao.addAction( "&Mediana" )
         self.opcaoSharpen.setShortcut( "Ctrl+4" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
-        self.menutranformacao.addSeparator()
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Filtro Mediano" )
+        self.opcaoSharpen = self.menutranformacao.addAction( "&Gaussiano" )
         self.opcaoSharpen.setShortcut( "Ctrl+5" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
         self.menutranformacao.addSeparator()
 
-        self.opcaoSharpen = self.menutranformacao.addAction( "&Filtro Gaussiano" )
+        self.opcaoSharpen = self.menutranformacao.addAction( "Escala cinza" )
         self.opcaoSharpen.setShortcut( "Ctrl+6" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoSharpen = self.menutranformacao.addAction( "Preto e branco" )
+        self.opcaoSharpen.setShortcut( "Ctrl+7" )
+        # self.opcaoSharpen.triggered.connect( self.transform_me1 )
+
+        self.opcaoSharpen = self.menutranformacao.addAction( "Separar camadas R.G.B" )
+        self.opcaoSharpen.setShortcut( "Ctrl+8" )
         # self.opcaoSharpen.triggered.connect( self.transform_me1 )
 
         # Menu Sobre
@@ -94,10 +98,10 @@ class MyWindow(QMainWindow):
 
         # Criar barra de status
         self.barradestatus = self.statusBar()
-        self.barradestatus.showMessage("Seja bem vindo ao NatalPhoto's ", 2000)
+        self.barradestatus.showMessage("Oi", 2000)
 
         # Criando Label
-        self.texto = QLabel("PDI: Lista 13 - Vinícius Natal Gonçalves", self)
+        self.texto = QLabel("Trabalho Final - PDI", self)
         self.texto.adjustSize()
         self.largura = self.texto.frameGeometry().width()
         self.altura = self.texto.frameGeometry().height()
@@ -133,9 +137,9 @@ class MyWindow(QMainWindow):
         self.msg.setText( "Desenvolvido por: \nAndré Nicácio e Vinícius Natal" )
         self.msg.setWindowTitle( "Sobre os alunos " )
         self.msg.setDetailedText(
-            "Data de término do projeto:  \n "
-            "Link do vídeo: \n"
-            "IItuiutaba, Instituto Federal do Triangulo Mineiro")
+            "Data de término do projeto: "
+            "\nLink do vídeo: \n"
+            "Ituiutaba, Instituto Federal do Triângulo Mineiro")
         self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
         self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
         self.reply = self.msg.clickedButton()
@@ -149,7 +153,7 @@ class MyWindow(QMainWindow):
             "Nome do Arquivo:  \n"
             "Tipo do Arquivo: \n"
             "Comentário: \n"
-            "Largura:  " 
+            "Largura:           " 
             "Altura:  ")
         self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
         self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
