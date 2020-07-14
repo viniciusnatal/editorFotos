@@ -1,7 +1,10 @@
 import numpy as np
+import math
+import sys
 
-entrada = open("starwars.pgm", "r+")
-saida = open("starwarscopiagama2.pgm", "w+")
+#abrir o arquivo original e a cópia
+entrada = open(sys.argv[1], "r+")
+saida = open(sys.argv[2], "w+")
 
 linha = entrada.readline() #P2
 linha = entrada.readline() #comentário
@@ -20,7 +23,7 @@ print(imagem)
 
 #escrevendo a imagem cópia
 saida.write("P2\n")
-saida.write("#Criado por Thais\n")
+saida.write("#Criado por Choke E Natal\n")
 saida.write(largura)
 saida.write(" ")
 saida.write(altura)
