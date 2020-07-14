@@ -65,7 +65,7 @@ es = int((len(elemento) - 1) / 2)
 
 #escrevendo a imagem cópia
 saida.write("P1\n")
-saida.write("#Criado por Thais\n")
+saida.write("#Criado por Andre e Natal\n")
 saida.write(str(largura))
 saida.write(" ")
 saida.write(str(altura))

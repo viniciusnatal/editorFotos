@@ -38,7 +38,7 @@ img = np.reshape(img, (altura, largura))
 
 #escrevendo a imagem cópia
 saida.write("P1\n")
-saida.write("#Criado por Thais\n")
+saida.write("#Criado por Andre e Thais\n")
 saida.write(str(largura))
 saida.write(" ")
 saida.write(str(altura))

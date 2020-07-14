@@ -23,7 +23,7 @@ print(imagem)
 
 #escrevendo a imagem cópia
 saida.write("P2\n")
-saida.write("#Criado por Thais\n")
+saida.write("#Criado por Andre e Natal\n")
 saida.write(largura)
 saida.write(" ")
 saida.write(altura)
