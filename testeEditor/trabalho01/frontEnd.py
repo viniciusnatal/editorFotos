@@ -40,6 +40,7 @@ class MyWindow(QMainWindow):
         self.menuarquivo.addSeparator()
 
         self.opcaofechar = self.menuarquivo.addAction( "&Salvar como..." )
+        #self.opcaofechar.triggered.connect(self.file_save)
         self.opcaofechar.setShortcut( "Ctrl+S" )
 
         self.menuarquivo.addSeparator()
@@ -129,12 +130,12 @@ class MyWindow(QMainWindow):
         ##MENU TRANSF TERMINA AQUI ------------------------------------------------------#
 
         ##MENU SOBRE COMEÇA AQUI ------------------------------------------------------#
-        self.opcaosobre = self.menuSobre.addAction("Info Alunos")
+        self.opcaosobre = self.menuSobre.addAction("Informações dos Alunos")
         self.opcaosobre.triggered.connect(self.exibe_mensagem)
 
         self.menuSobre.addSeparator()
 
-        self.opcaosobre2 = self.menuSobre.addAction("Infos Imagem")
+        self.opcaosobre2 = self.menuSobre.addAction("Informações da Imagem")
         self.opcaosobre2.triggered.connect(self.exibe_mensagem2)
         ##MENU ARQUIVOS TERMINA AQUI ------------------------------------------------------#
 
@@ -187,31 +188,61 @@ class MyWindow(QMainWindow):
         self.reply = self.msg.clickedButton()
 
     def exibe_mensagem2(self):
+    #Parte superior da Janela   
         self.msg = QMessageBox()
-        self.msg.setIcon( QMessageBox.Information )
-        self.msg.setText( "Informações do Arquivo " )
-        self.msg.setWindowTitle( "Sobre a Imagem" )
-        self.msg.setDetailedText(
-            "Nome do Arquivo:  \n"
-            "Tipo do Arquivo: \n"
-            "Comentário: \n"
-            "Largura:           " 
-            "Altura:  ")
-        self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
-        self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
-        self.reply = self.msg.clickedButton()
+        self.msg.setIcon(QMessageBox.Information)
+        self.msg.setText("Clique no botão abaixo para obter as informações da imagem.")
+        self.msg.setWindowTitle("Informações da Imagem")
+     
+     #Entrada e leitura da imagem
+        self.entrada = open(self.endereco1, "r+")
+        self.linha = self.entrada.readline() 
+        self.linha2 = self.entrada.readline() 
+        self.linha1 = self.entrada.readline() 
+        self.dimensoes = self.linha1.split()
+        self.largura = self.dimensoes[0]
+        self.altura = self.dimensoes[1]
 
-    def transform_me1(self):
+    #Interpretador para criar o comentário
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('/')
+        self.parts2 = self.string.rpartition('.')
+        print(self.string)
+        print(self.parts)
+
+        self.msg.setDetailedText("Nome: " + self.parts[2] + "\n" + "Extensão do Arquivo: " + self.parts2[2] + "\n" + "Comentario : " + self.linha2 + "\n" + "Largura : " +  self.largura + "\n" + "Altura: " +  self.altura)
+
+        self.msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        self.msg.exec_()# exibir a caixa de mensagens, ou caixa de diálogo
+        self.reply = self.msg.clickedButton()
+        self.barradestatus.showMessage("Foi clicado o botao: " + self.reply.text())
+
+    def transform_me1(self):    
         self.entrada = self.endereco1
         self.saida = 'images/transfNegativo.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/filtro_negativo.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print(self.program)
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap(self.endereco2)
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap(self.pixmap2)
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.')
+        print(self.parts)
+        
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/filtros/filtro_negativo.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
+                                
 
     def transform_me2(self):
         self.entrada = self.endereco1
@@ -423,6 +454,13 @@ class MyWindow(QMainWindow):
 
         print(fileName)
 
+    #def file_save(self):
+    #    name = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File')
+#
+    #    text = self.textEdit.toPlainText()
+    #    file.write(text)
+    #    file.close()
+        #
     def button_clicked(self):
         self.texto.setText("Voce clicou no Botao!")
         self.texto.adjustSize()
