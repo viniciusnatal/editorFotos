@@ -1,14 +1,19 @@
+import os
 import sys
 import subprocess
+import shutil
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QGridLayout, QWidget, QMessageBox
 from PyQt5.QtCore import QSize
+
+
 
 class MyWindow(QMainWindow):
     def __init__(self):
         super( MyWindow, self ).__init__()
         self.setup_main_window()
         self.initUI()
+        self.swapper=[]
 
     def setup_main_window(self):
         self.x = 800
@@ -19,9 +24,9 @@ class MyWindow(QMainWindow):
         self.setCentralWidget(self.wid)
         self.layout = QGridLayout()
         self.wid.setLayout(self.layout)
+        
 
     def initUI(self):
-
         # Criando a barr de menu
         self.barrademenu = self.menuBar()
 
@@ -40,7 +45,7 @@ class MyWindow(QMainWindow):
         self.menuarquivo.addSeparator()
 
         self.opcaofechar = self.menuarquivo.addAction( "&Salvar como..." )
-        #self.opcaofechar.triggered.connect(self.file_save)
+        self.opcaofechar.triggered.connect(self.file_save)
         self.opcaofechar.setShortcut( "Ctrl+S" )
 
         self.menuarquivo.addSeparator()
@@ -123,12 +128,11 @@ class MyWindow(QMainWindow):
         self.opcaoFechamento.setShortcut( "Ctrl+F7" )
         self.opcaoFechamento.triggered.connect( self.transform_me17 )#===============================================================================FECHAMENTO
 
-        #self.opcaoDetBin = self.menuTransf.addAction( "&Detecção Binária" )
-        #self.opcaoDetBin.setShortcut( "Ctrl+F8" )
-        #self.opcaoSharpen.triggered.connect( self.transform_me18 )
+        self.opcaoDetBin = self.menuTransf.addAction( "&Rotacionar Imagem" )
+        self.opcaoDetBin.setShortcut( "Ctrl+F8" )
+        self.opcaoSharpen.triggered.connect( self.transform_me18 )
 
         ##MENU TRANSF TERMINA AQUI ------------------------------------------------------#
-
         ##MENU SOBRE COMEÇA AQUI ------------------------------------------------------#
         self.opcaosobre = self.menuSobre.addAction("Informações dos Alunos")
         self.opcaosobre.triggered.connect(self.exibe_mensagem)
@@ -222,8 +226,7 @@ class MyWindow(QMainWindow):
         self.saida = 'images/transfNegativo.pgm'
         self.string = self.endereco1
         self.parts = self.string.rpartition('.')
-        print(self.parts)
-        
+        print(self.parts) 
         if (self.parts[2] == 'pgm'):
             self.script = 'testeEditor/trabalho01/filtros/filtro_negativo.py'
             self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
@@ -233,7 +236,6 @@ class MyWindow(QMainWindow):
             self.pixmap2 = QtGui.QPixmap(self.endereco2)
             self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
             self.imagem2.setPixmap(self.pixmap2) 
-
         else:            
             self.msg = QMessageBox()
             self.msg.setIcon(QMessageBox.Information)
@@ -244,192 +246,372 @@ class MyWindow(QMainWindow):
             self.reply = self.msg.clickedButton()
                                 
 
-    def transform_me2(self):
+    def transform_me2(self): 
         self.entrada = self.endereco1
         self.saida = 'images/transfGammal.pgm'
-        self.script = 'testeEditor/trabalho01/transformacoes/Fator_gama.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/Fator_gama.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me3(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfSharpen.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/sharpen.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.saida = 'testeEditor/trabalho01/filtros/sharpen.py'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/filtros/sharpen.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
     
     def transform_me4(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfMediana.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/filtro_mediana.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.saida = 'testeEditor/trabalho01/filtros/filtro_mediana.py'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/filtros/filtro_mediana.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me5(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfGaussiano.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/filtro_gaussiano.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print(self.program)
-        subprocess.run(self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap(self.endereco2)
-        self.pixmap2 = self.pixmap2.scaled(500, 500, QtCore.Qt.KeepAspectRatio)
-        self.imagem2.setPixmap(self.pixmap2)
+        self.saida = 'testeEditor/trabalho01/filtros/filtro_gaussiano.py'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/filtros/filtro_gaussiano.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
     
     def transform_me6(self):
         self.entrada = self.endereco1
         self.saida = 'images/transfEscala.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/escala_de_cinza.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'ppm'):
+            self.script = 'testeEditor/trabalho01/filtros/escala_de_cinza.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PPM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me7(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfEscala.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/peb.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.saida = 'images/transfPB.pgm'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'ppm'):
+            self.script = 'testeEditor/trabalho01/filtros/peb.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PPM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
     
     def transform_me8(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfEscala.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/filtro_vermelho.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.saida = 'images/transVermelho.pgm'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'ppm'):
+            self.script = 'testeEditor/trabalho01/filtros/filtro_vermelho.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PPM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
     
     def transform_me9(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfEscala.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/filtro_verde.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.saida = 'images/transfverde.pgm'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'ppm'):
+            self.script = 'testeEditor/trabalho01/filtros/filtro_verde.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PPM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me0(self):
         self.entrada = self.endereco1
-        self.saida = 'images/transfEscala.pgm'
-        self.script = 'testeEditor/trabalho01/filtros/filtro_azul.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
-
-
+        self.saida = 'images/transfazul.pgm'
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'ppm'):
+            self.script = 'testeEditor/trabalho01/filtros/filtro_azul.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PPM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me11(self):
         self.entrada = self.endereco1
         self.saida = 'images/transfLog.pgm'
-        self.script = 'testeEditor/trabalho01/transformacoes/Transformacao_Logaritmica.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/Transformacao_Logaritmica.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me12(self):
         self.entrada = self.endereco1
         self.saida = 'images/transfSobel.pgm'
-        self.script = 'testeEditor/trabalho01/transformacoes/transfSobel.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/transfSobel.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me13(self):
         self.entrada = self.endereco1
         self.saida = 'images/Deteccao_t1.pgm'
-        self.script = 'testeEditor/trabalho01/transformacoes/filtro_edge.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        self.string = self.endereco1
+        self.parts = self.string.rpartition('.') 
+        if (self.parts[2] == 'pgm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/filtro_edge.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PGM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me14(self):
         self.entrada = self.endereco1
         self.saida = 'images/saidaErosao.ppm'
-        self.script = 'testeEditor/trabalho01/transformacoes/erosao.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        if (self.parts[2] == 'pbm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/erosao.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PBM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me15(self):
         self.entrada = self.endereco1
         self.saida = 'images/saidaDilatacao.ppm'
-        self.script = 'testeEditor/trabalho01/transformacoes/dilatacao.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+        if (self.parts[2] == 'pbm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/dilatacao.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PBM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me16(self):
         self.entrada = self.endereco1
         self.saida = 'images/saidaAbertura.pgm'
-        self.script = 'testeEditor/trabalho01/transformacoes/abertura.py'
-        self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
-        print( self.program )
-        subprocess.run( self.program, shell=True )
-        self.endereco2 = self.saida
-        self.pixmap2 = QtGui.QPixmap( self.endereco2 )
-        self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
-        self.imagem2.setPixmap( self.pixmap2 )
+
+        if (self.parts[2] == 'pbm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/abertura.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PBM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
 
     def transform_me17(self):
         self.entrada = self.endereco1
         self.saida = 'images/saidaFechamento.pgm'
-        self.script = 'testeEditor/trabalho01/transformacoes/fechamento.py'
+
+        if (self.parts[2] == 'pbm'):
+            self.script = 'testeEditor/trabalho01/transformacoes/fechamento.py'
+            self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
+            print(self.program)
+            subprocess.run( self.program, shell=True )
+            self.endereco2 = self.saida
+            self.pixmap2 = QtGui.QPixmap(self.endereco2)
+            self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
+            self.imagem2.setPixmap(self.pixmap2) 
+        else:            
+            self.msg = QMessageBox()
+            self.msg.setIcon(QMessageBox.Information)
+            self.msg.setWindowTitle("ERRO!")
+            self.msg.setText("Somente arquivos PBM")
+            self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
+            self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
+            self.reply = self.msg.clickedButton()
+
+    def transform_me18(self):
+        self.entrada = self.endereco1
+        self.saida = 'images/saidaFechamento.pgm'
+        self.script = 'testeEditor/trabalho01/transformacoes/rotacionarImagem.py'
         self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
         print( self.program )
         subprocess.run(self.program, shell=True)
@@ -437,9 +619,6 @@ class MyWindow(QMainWindow):
         self.pixmap2 = QtGui.QPixmap(self.endereco2)
         self.pixmap2 = self.pixmap2.scaled(500, 500, QtCore.Qt.KeepAspectRatio)
         self.imagem2.setPixmap(self.pixmap2)
-
-    
-
 
     def open_file(self):
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName( self, caption='Abrir Imagem',
@@ -454,13 +633,25 @@ class MyWindow(QMainWindow):
 
         print(fileName)
 
-    #def file_save(self):
-    #    name = QtWidgets.QFileDialog.getSaveFileName(self, 'Save File')
-#
-    #    text = self.textEdit.toPlainText()
-    #    file.write(text)
-    #    file.close()
-        #
+    resultIMG = ''
+    def file_save(self):  
+        global resultIMG 
+        self.enderecoResultOriginal = self.endereco2     
+        if self.enderecoResultOriginal  != '':
+            fileName, _ = QtWidgets.QFileDialog.getSaveFileName(self, caption='Choose new location to save project...',
+                                                            filter=' Todos os Tipos (*);;Images (*.ppm; *.pgm; *.pbm; *.jpg; *.png)',
+                                                            directory = QtCore.QDir.currentPath() + self.resultIMG)
+            if fileName:
+                self.parts = fileName.rpartition('/')
+                self.endereco = self.parts[0]
+                if self.endereco2 != '':
+                    shutil.copyfile(self.endereco2,
+                                    self.endereco + '/'+os.path.splitext(os.path.basename(
+                                    fileName))[0] + self.resultIMG)
+                else:   
+                     shutil.copyfile(self.enderecoResultOriginal, self.endereco 
+                                    )      
+
     def button_clicked(self):
         self.texto.setText("Voce clicou no Botao!")
         self.texto.adjustSize()

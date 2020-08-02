@@ -1,9 +1,8 @@
+# -*- coding: utf-8 -*-
 import numpy as np
-import math
-import sys
 
-entrada = open(sys.argv[1], "r+")
-saida = open(sys.argv[2], "w+")
+entrada = open("star.pbm", "r+")
+saida = open("star_fechamento_3x3.pbm", "w+")
 
 linha = entrada.readline() # P1
 linha = entrada.readline() # Comentário
@@ -42,11 +41,11 @@ como nos outros códigos (ppm e pgm).
 
 
 #Elemento Estruturante 3x3
-#elemento = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
+elemento = [[1, 1, 1], [1, 1, 1], [1, 1, 1]]
 
 
 #Elemento Estruturante 5x5
-elemento = [[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]]
+#elemento = [[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]]
 
 
 #Elemento Estruturante 7x7
@@ -70,7 +69,7 @@ es = int((len(elemento) - 1) / 2)
 
 #escrevendo a imagem cópia
 saida.write("P1\n")
-saida.write("#Criado por Andre\n")
+saida.write("#Criado por Thais\n")
 saida.write(str(largura))
 saida.write(" ")
 saida.write(str(altura))
@@ -114,4 +113,3 @@ for linha in range(len(image3)):
 # fechar os dois arquivos.
 entrada.close()
 saida.close()
-
