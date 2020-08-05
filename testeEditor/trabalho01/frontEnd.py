@@ -16,10 +16,11 @@ class MyWindow(QMainWindow):
         self.swapper=[]
 
     def setup_main_window(self):
-        self.x = 800
+        self.x = 1000
         self.y = 600
         self.setMinimumSize(QSize(self.x, self.y))
         self.setWindowTitle("Choque e Natal Photos")
+        self.setStyleSheet("background-color: black;")
         self.wid = QWidget(self)
         self.setCentralWidget(self.wid)
         self.layout = QGridLayout()
@@ -29,7 +30,8 @@ class MyWindow(QMainWindow):
     def initUI(self):
         # Criando a barr de menu
         self.barrademenu = self.menuBar()
-
+        self.barrademenu.setStyleSheet("background-color: gray; font-family: Gill, Helvetica, sans-serif; font-size: 15px; font-style: bold")
+        
         # Criar os menus
         self.menuarquivo = self.barrademenu.addMenu("&Arquivo")
         self.menuFiltros = self.barrademenu.addMenu("&Filtros")
@@ -156,14 +158,14 @@ class MyWindow(QMainWindow):
 
         # Criando as imagens
         self.imagem1 = QLabel(self)
-        self.endereco1 = 'images/narutin.jpg'
+        self.endereco1 = 'images/a.png'
         self.pixmap1 = QtGui.QPixmap(self.endereco1)
         self.pixmap1 = self.pixmap1.scaled(500, 500, QtCore.Qt.KeepAspectRatio)
         self.imagem1.setPixmap(self.pixmap1)
         self.texto.setAlignment(QtCore.Qt.AlignCenter)
 
         self.imagem2 = QLabel(self)
-        self.endereco2 = 'images/narutin.jpg'
+        self.endereco2 = 'images/a.png'
         self.pixmap2 = QtGui.QPixmap(self.endereco2)
         self.pixmap2 = self.pixmap2.scaled( 500, 500, QtCore.Qt.KeepAspectRatio )
         self.imagem2.setPixmap(self.pixmap2)
@@ -182,23 +184,20 @@ class MyWindow(QMainWindow):
         self.msg = QMessageBox()
         self.msg.setIcon( QMessageBox.Information )
         self.msg.setText( "Desenvolvido por: \nAndré Nicácio e Vinícius Natal" )
-        self.msg.setWindowTitle( "Sobre os alunos " )
+        self.msg.setWindowTitle( "Sobre os alunos" )
         self.msg.setDetailedText(
             "Data de término do projeto: "
-            "\nLink do vídeo: \n"
+            "\nLink do vídeo: https://www.youtube.com/channel/UCnkvnp-_ixVBpldYYapuusQ\n"
             "Ituiutaba, Instituto Federal do Triângulo Mineiro")
         self.msg.setStandardButtons( QMessageBox.Ok | QMessageBox.Cancel )
         self.msg.exec_()  # exibir a caixa de mensagens, ou caixa de diálogo
         self.reply = self.msg.clickedButton()
 
     def exibe_mensagem2(self):
-    #Parte superior da Janela   
         self.msg = QMessageBox()
         self.msg.setIcon(QMessageBox.Information)
         self.msg.setText("Clique no botão abaixo para obter as informações da imagem.")
         self.msg.setWindowTitle("Informações da Imagem")
-     
-     #Entrada e leitura da imagem
         self.entrada = open(self.endereco1, "r+")
         self.linha = self.entrada.readline() 
         self.linha2 = self.entrada.readline() 
@@ -271,11 +270,11 @@ class MyWindow(QMainWindow):
 
     def transform_me3(self):
         self.entrada = self.endereco1
-        self.saida = 'testeEditor/trabalho01/filtros/sharpen.py'
+        self.saida = 'images/Sharpenl.pgm'
         self.string = self.endereco1
         self.parts = self.string.rpartition('.') 
         if (self.parts[2] == 'pgm'):
-            self.script = 'testeEditor/trabalho01/filtros/sharpen.py'
+            self.script = 'testeEditor/trabalho01/filtros/filtro_sharpen.py'
             self.program = 'python' + ' \"' + self.script + '\" ' + self.entrada + ' ' + self.saida
             print(self.program)
             subprocess.run( self.program, shell=True )
@@ -294,7 +293,7 @@ class MyWindow(QMainWindow):
     
     def transform_me4(self):
         self.entrada = self.endereco1
-        self.saida = 'testeEditor/trabalho01/filtros/filtro_mediana.py'
+        self.saida = 'images/mediana.pgm'
         self.string = self.endereco1
         self.parts = self.string.rpartition('.') 
         if (self.parts[2] == 'pgm'):
@@ -317,7 +316,7 @@ class MyWindow(QMainWindow):
 
     def transform_me5(self):
         self.entrada = self.endereco1
-        self.saida = 'testeEditor/trabalho01/filtros/filtro_gaussiano.py'
+        self.saida = 'images/Gaussianol.pgm'
         self.string = self.endereco1
         self.parts = self.string.rpartition('.') 
         if (self.parts[2] == 'pgm'):

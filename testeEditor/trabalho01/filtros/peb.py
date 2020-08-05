@@ -38,14 +38,14 @@ img = np.reshape(img, (altura, largura))
 
 #escrevendo a imagem cópia
 saida.write("P1\n")
-saida.write("#Criado por Andre e Thais\n")
+saida.write("#Criado por Andre e Natal\n")
 saida.write(str(largura))
 saida.write(" ")
 saida.write(str(altura))
 saida.write("\n")
 limite = 192
 
-#fazer a cópia para imagem binária
+
 for i in range(len(img)):
     for j in range(len(img[1])):
         if img[i][j] > limite:
